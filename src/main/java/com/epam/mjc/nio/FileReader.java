@@ -12,28 +12,29 @@ import java.util.Map;
 public class FileReader {
 
     public Profile getDataFromFile(File file) {
-        Map<String,String> personalData = new HashMap<>();
+                Map<String, String> personalData = new HashMap<>();
         Profile profile = new Profile();
-        String data;
+        StringBuilder data = new StringBuilder();
         try (RandomAccessFile aFile = new RandomAccessFile(file, "r");
              FileChannel inChannel = aFile.getChannel();) {
-
             long fileSize = inChannel.size();
 
             //Create buffer of the file size
             ByteBuffer buffer = ByteBuffer.allocate((int) fileSize);
             inChannel.read(buffer);
-            buffer.flip();
-            while ((data = aFile.readLine()) != null){
-                String[] keyValue = data.split(":");
-                personalData.put(keyValue[0].trim(), keyValue[1].trim());
-            }
+            StringBuilder sb = new StringBuilder();
 
+
+            while (inChannel.read(buffer) > 0) {
+                buffer.flip();
+                for (int i = 0; i < buffer.limit(); i++) {
+                    data.append((char) buffer.get());
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (NumberFormatException e){
-            e.printStackTrace();
+        } catch (NumberFormatException s) {
+            s.printStackTrace();
         }
         profile.setAge(Integer.parseInt(personalData.get("Age")));
         profile.setName(personalData.get("Name"));
