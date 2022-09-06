@@ -12,18 +12,13 @@ import java.util.Map;
 public class FileReader {
 
     public Profile getDataFromFile(File file) {
-                Map<String, String> personalData = new HashMap<>();
+        Map<String, String> personalData = new HashMap<>();
         Profile profile = new Profile();
         StringBuilder data = new StringBuilder();
+
         try (RandomAccessFile aFile = new RandomAccessFile(file, "r");
-             FileChannel inChannel = aFile.getChannel();) {
-            long fileSize = inChannel.size();
-
-            //Create buffer of the file size
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            inChannel.read(buffer);
-            StringBuilder sb = new StringBuilder();
-
+             FileChannel inChannel = aFile.getChannel()) {
+             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             while (inChannel.read(buffer) > 0) {
                 buffer.flip();
@@ -31,13 +26,29 @@ public class FileReader {
                     data.append((char) buffer.get());
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
-        } 
-        profile.setAge(Integer.parseInt(personalData.get("Age")));
-        profile.setName(personalData.get("Name"));
-        profile.setEmail(personalData.get("Email"));
-        profile.setPhone(Long.parseLong(personalData.get("Phone")));
+        } catch (NumberFormatException n) {
+            n.printStackTrace();
+        }
+
+       String[] d = data.toString().split(System.lineSeparator());
+
+        for (int x = 0; x < d.length; x++) {
+            String row = d[x];
+            String[] keyValue = row.split(":");
+            personalData.put(keyValue[0].trim(), keyValue[1].trim());
+        }
+
+        try {
+            profile.setName(personalData.get("Name"));
+            profile.setAge(Integer.parseInt(personalData.get("Age")));
+            profile.setEmail(personalData.get("Email"));
+            profile.setPhone(Long.parseLong(personalData.get("Phone")));
+        } catch (NumberFormatException n) {
+            n.printStackTrace();
+        }
         return profile;
     }
 }
