@@ -1,10 +1,12 @@
 package com.epam.mjc.nio;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
 
 
 public class FileReader {
