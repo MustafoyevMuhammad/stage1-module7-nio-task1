@@ -32,6 +32,9 @@ public class FileReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        catch (NumberFormatException e){
+            e.printStackTrace();
+        }
         profile.setAge(Integer.parseInt(personalData.get("Age")));
         profile.setName(personalData.get("Name"));
         profile.setEmail(personalData.get("Email"));
