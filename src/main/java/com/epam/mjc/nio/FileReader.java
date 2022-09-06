@@ -1,17 +1,16 @@
 package com.epam.mjc.nio;
-import java.io.*;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.io.File;
 
 
 public class FileReader {
 
     public Profile getDataFromFile(File file) {
-                Map<String,String> personalData = new HashMap<>();
+        Map<String,String> personalData = new HashMap<>();
         Profile profile = new Profile();
         String data;
         try (RandomAccessFile aFile = new RandomAccessFile(file, "r");
@@ -23,18 +22,13 @@ public class FileReader {
             ByteBuffer buffer = ByteBuffer.allocate((int) fileSize);
             inChannel.read(buffer);
             buffer.flip();
-            String str = "";
-            for (int i = 0; i < fileSize; i++) {
-                str += (char)buffer.get();
-            }
-            Scanner sc = new Scanner(str);
-            while ((data = sc.nextLine()) != null){
+            while ((data = aFile.readLine()) != null){
                 String[] keyValue = data.split(":");
                 personalData.put(keyValue[0].trim(), keyValue[1].trim());
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         profile.setAge(Integer.parseInt(personalData.get("Age")));
         profile.setName(personalData.get("Name"));
